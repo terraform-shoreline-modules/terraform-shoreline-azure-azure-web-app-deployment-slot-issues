@@ -1,0 +1,126 @@
+{
+  "name": "azure_web_app_deployment_slot_issues",
+  "description": "This incident type refers to problems with deployment slots in Azure webapps. These issues may include slot swaps failing or staging slots not behaving as expected. In order to resolve this type of incident, it is recommended to review the deployment slot configurations and ensure that app settings and connection strings are correctly propagated between slots. It is also important to investigate errors during swaps and any other slot-specific issues that may be causing the problem.",
+  "params": [
+    {
+      "name": "TARGET_SLOT_NAME",
+      "value": ""
+    },
+    {
+      "name": "CONNECTION_STRING",
+      "value": ""
+    },
+    {
+      "name": "WEBAPP_NAME",
+      "value": ""
+    },
+    {
+      "name": "RESOURCE_GROUP_NAME",
+      "value": ""
+    },
+    {
+      "name": "SLOT_NAME",
+      "value": ""
+    },
+    {
+      "name": "APP_SETTINGS",
+      "value": ""
+    },
+    {
+      "name": "CONNECTION_STRING_TYPE",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Azure Web App Deployment Slot Issues\nThis incident type refers to problems with deployment slots in Azure webapps. These issues may include slot swaps failing or staging slots not behaving as expected. In order to resolve this type of incident, it is recommended to review the deployment slot configurations and ensure that app settings and connection strings are correctly propagated between slots. It is also important to investigate errors during swaps and any other slot-specific issues that may be causing the problem."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## List all deployment slots for a given webapp"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `az webapp deployment slot list --resource-group ${RESOURCE_GROUP_NAME} --name ${WEBAPP_NAME}`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Get the app settings for a given deployment slot"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `az webapp config appsettings list --resource-group ${RESOURCE_GROUP_NAME} --name ${WEBAPP_NAME} --slot ${SLOT_NAME}`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Get the connection strings for a given deployment slot"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `az webapp config connection-string list --resource-group ${RESOURCE_GROUP_NAME} --name ${WEBAPP_NAME} --slot ${SLOT_NAME}`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Swap two deployment slots"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `az webapp deployment slot swap --resource-group ${RESOURCE_GROUP_NAME} --name ${WEBAPP_NAME} --slot ${SLOT_NAME} --target-slot ${TARGET_SLOT_NAME}`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Get logs for a given deployment slot"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `az webapp log tail --resource-group ${RESOURCE_GROUP_NAME} --name ${WEBAPP_NAME} --slot ${SLOT_NAME}`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Update and review deployment slot configurations this includes ensuring that each slot has the correct settings, such as the app settings and connection strings, and that they are correctly propagated between slots."
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_config_slots($CONNECTION_STRING, $WEBAPP_NAME, $RESOURCE_GROUP_NAME, $APP_SETTINGS, $CONNECTION_STRING_TYPE)"
+    }
+  ]
+}
